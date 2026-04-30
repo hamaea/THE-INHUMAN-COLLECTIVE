@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE INHUMAN COLLECTIVE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="landing-page">
+    <header class="site-header">
+        <a class="site-header__link" href="landing.html" aria-label="Go to landing page">
+            <img
+                class="site-header__title"
+                src="assets/00. THE INHUMAN COLLECTIVE.png"
+                alt="The Inhuman Collective"
+            >
+        </a>
+    </header>
+
+    <main class="landing-main">
+        <button class="landing-main__prompt" id="landing-prompt" type="button">HUMANITY IS</button>
+
+        <form class="landing-form" id="landing-form" novalidate>
+            <label class="sr-only" for="password-input">Enter password</label>
+            <input
+                id="password-input"
+                class="landing-form__input"
+                type="text"
+                name="password"
+                inputmode="text"
+                autocomplete="off"
+                autocapitalize="characters"
+                spellcheck="false"
+                placeholder="RESPOND"
+                aria-label="Respond with password"
+                tabindex="-1"
+            >
+        </form>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
