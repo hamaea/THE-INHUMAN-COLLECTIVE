@@ -24,6 +24,11 @@ body {
     min-height: 100%;
 }
 
+html {
+    scroll-snap-type: y mandatory;
+    scroll-padding-top: 3.32rem;
+}
+
 body.landing-page {
     overflow: hidden;
     background: var(--page-bg);
@@ -38,6 +43,7 @@ body.main-page {
     font-family: Georgia, "Times New Roman", serif;
     overscroll-behavior-y: none;
     overflow-x: hidden;
+    scroll-snap-type: y mandatory;
 }
 
 .site-header {
@@ -243,7 +249,7 @@ body.landing-page.is-activated .landing-form {
 
 .mainpage-left__canvas {
     position: relative;
-    min-height: 3600px;
+    min-height: 400vh;
 }
 
 .mainpage-fixed-heading {
@@ -302,27 +308,27 @@ body.landing-page.is-activated .landing-form {
 }
 
 .mainpage-art--flower {
-    top: 4.3rem;
+    top: calc(4.3rem - 150px);
     left: 5vw;
     width: min(52vw, 46.5rem);
 }
 
 .mainpage-art--eye {
-    top: calc(100vh + 2rem);
+    top: calc(100vh - 4rem + 100px);
     left: 1.4vw;
     width: min(53vw, 46rem);
 }
 
 .mainpage-art--cat {
-    top: calc(200vh + 3rem);
+    top: calc(200vh - 5rem);
     left: 0.8vw;
     width: min(66vw, 59rem);
 }
 
 .mainpage-art--apple {
-    top: calc(300vh + 1rem);
+    top: calc(300vh - 4rem - 170px);
     left: 5.2vw;
-    width: min(46vw, 41rem);
+    width: min(58.65vw, 52.275rem);
 }
 
 .mainpage-right {
@@ -331,12 +337,14 @@ body.landing-page.is-activated .landing-form {
 }
 
 .mainpage-copy {
-    min-height: 3600px;
+    min-height: 400vh;
     padding: 0 1rem 8rem 1rem;
 }
 
 .mainpage-copy__panel {
     min-height: calc(100vh - 3.32rem);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
 }
 
 .mainpage-copy__panel--headline {
@@ -346,7 +354,18 @@ body.landing-page.is-activated .landing-form {
 }
 
 .mainpage-copy__panel--mantra {
-    padding-top: calc(3.4rem + 40px);
+    padding-top: calc(3.32rem + 40px);
+}
+
+.mainpage-copy__panel--poster {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+}
+
+.mainpage-copy__panel--merch {
+    padding: 0 1rem;
 }
 
 .mainpage-copy__headline {
@@ -376,7 +395,8 @@ body.landing-page.is-activated .landing-form {
 }
 
 .mainpage-copy__headline::after,
-.mainpage-copy__body p::after {
+.mainpage-copy__body p::after,
+.folio-footer__column p::after {
     content: attr(data-text);
     position: absolute;
     inset: 0;
@@ -393,6 +413,130 @@ body.landing-page.is-activated .landing-form {
     -webkit-background-clip: text;
     background-clip: text;
     pointer-events: none;
+}
+
+.poster-stage {
+    width: min(100%, 44rem);
+}
+
+.poster-stage__stack {
+    position: relative;
+    width: min(100%, 40rem);
+    aspect-ratio: 4284 / 5712;
+    margin-left: 10px;
+}
+
+.poster-stage__image {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    user-select: none;
+    pointer-events: none;
+    opacity: 0;
+    will-change: opacity;
+}
+
+.poster-stage__image.is-active {
+    opacity: 1;
+}
+
+.merch-stage {
+    min-height: calc(100vh - 3.32rem);
+    padding: 2rem 0 clamp(1.25rem, 1.8vh, 1.75rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.merch-stage__products {
+    height: calc(((100vh - 3.32rem) / 2) + (var(--heading-word-height) / 2));
+    display: flex;
+    align-items: flex-end;
+    transform: translateY(calc(30% + 50px));
+}
+
+.merch-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 1.8vw, 2rem);
+    align-items: end;
+}
+
+.merch-card {
+    position: relative;
+    aspect-ratio: 5 / 7;
+    overflow: hidden;
+    background: #111111;
+}
+
+.merch-card__image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: opacity 180ms ease;
+}
+
+.merch-card__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.52);
+    opacity: 0;
+    transition: opacity 180ms ease;
+    pointer-events: none;
+}
+
+.merch-card:hover .merch-card__image,
+.merch-card:focus-within .merch-card__image {
+    opacity: 0.42;
+}
+
+.merch-card:hover .merch-card__overlay,
+.merch-card:focus-within .merch-card__overlay {
+    opacity: 1;
+}
+
+.merch-card__price {
+    margin: 0;
+    color: #ffffff;
+    font-family: "PP Writer", Georgia, serif;
+    font-size: clamp(1.2rem, 1.25vw, 1.39625rem);
+    line-height: 1.09;
+    letter-spacing: -0.02em;
+}
+
+.folio-footer {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+    align-items: end;
+    padding: 0 0.5rem;
+    font-family: "PP Writer", Georgia, serif;
+    font-size: clamp(0.84rem, 0.875vw, 0.977375rem);
+    line-height: 1.09;
+    letter-spacing: -0.02em;
+}
+
+.folio-footer__column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.folio-footer__column:last-child {
+    justify-self: end;
+    text-align: left;
+}
+
+.folio-footer__column p {
+    margin: 0;
+    position: relative;
 }
 
 @media (max-width: 1100px) {
@@ -413,6 +557,10 @@ body.landing-page.is-activated .landing-form {
 }
 
 @media (max-width: 900px) {
+    html {
+        scroll-padding-top: 3rem;
+    }
+
     body.main-page {
         background: #ffffff;
     }
@@ -446,7 +594,7 @@ body.landing-page.is-activated .landing-form {
     }
 
     .mainpage-left {
-        min-height: 150rem;
+        min-height: 200rem;
     }
 
     .mainpage-art--flower {
@@ -456,19 +604,19 @@ body.landing-page.is-activated .landing-form {
     }
 
     .mainpage-art--eye {
-        top: calc(100vh + 2rem);
+        top: calc(100vh - 2rem);
         left: -4vw;
         width: 94vw;
     }
 
     .mainpage-art--cat {
-        top: calc(200vh + 2rem);
+        top: calc(200vh - 3rem);
         left: -4vw;
         width: 116vw;
     }
 
     .mainpage-art--apple {
-        top: calc(300vh + 2rem);
+        top: calc(300vh - 2rem);
         left: 5vw;
         width: 83vw;
     }
@@ -495,6 +643,16 @@ body.landing-page.is-activated .landing-form {
         padding-top: 2rem;
     }
 
+    .mainpage-copy__panel--poster {
+        min-height: calc(100vh - 3rem);
+        align-items: center;
+        padding: 0 0.75rem;
+    }
+
+    .mainpage-copy__panel--merch {
+        padding: 0 0.75rem;
+    }
+
     .mainpage-copy__headline {
         max-width: none;
         font-size: clamp(2.7rem, 12vw, 4.6rem);
@@ -505,5 +663,48 @@ body.landing-page.is-activated .landing-form {
         margin-top: 2.5rem;
         font-size: clamp(1rem, 4.2vw, 1.5rem);
         line-height: 1.22;
+    }
+
+    .poster-stage {
+        width: 100%;
+    }
+
+    .poster-stage__stack {
+        margin-left: 0;
+    }
+
+    .merch-stage {
+        min-height: calc(100vh - 3rem);
+        padding: 1.5rem 0 1rem;
+        gap: 2rem;
+    }
+
+    .merch-stage__products {
+        height: auto;
+        transform: none;
+    }
+
+    .merch-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .merch-card {
+        aspect-ratio: 4 / 5;
+    }
+
+    .merch-card__price {
+        font-size: clamp(1rem, 4.2vw, 1.5rem);
+    }
+
+    .folio-footer {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+        padding: 0;
+        font-size: clamp(0.7rem, 2.94vw, 1.05rem);
+    }
+
+    .folio-footer__column:last-child {
+        justify-self: start;
     }
 }

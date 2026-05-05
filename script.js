@@ -43,6 +43,11 @@ if (landingForm && passwordInput) {
 const gradientPanel = document.getElementById("gradient-panel");
 const scrollWord = document.getElementById("scroll-word");
 const copyHighlightContainer = document.querySelector(".mainpage-copy");
+const mainPagePanels = Array.from(document.querySelectorAll(".mainpage-copy__panel"));
+const posterStage = document.getElementById("poster-stage");
+const posterStageImages = posterStage
+    ? Array.from(posterStage.querySelectorAll(".poster-stage__image"))
+    : [];
 
 if (gradientPanel) {
     const gradientColors = [
@@ -62,7 +67,7 @@ if (gradientPanel) {
 
 if (copyHighlightContainer) {
     const highlightTargets = copyHighlightContainer.querySelectorAll(
-        ".mainpage-copy__headline, .mainpage-copy__body p"
+        ".mainpage-copy__headline, .mainpage-copy__body p, .folio-footer__column p"
     );
 
     highlightTargets.forEach((target) => {
@@ -142,4 +147,139 @@ if (scrollWord) {
     updateScrollWord();
     window.addEventListener("scroll", updateScrollWord, { passive: true });
     window.addEventListener("resize", updateScrollWord);
+}
+
+if (posterStage && posterStageImages.length > 0) {
+    const posterCount = Number.parseInt(posterStage.dataset.posterCount ?? "0", 10);
+    let activePosterIndex = 1;
+
+    const setPosterFrame = (frameIndex) => {
+        const safeFrame = Math.min(Math.max(frameIndex, 1), posterCount);
+
+        if (activePosterIndex === safeFrame) {
+            return;
+        }
+
+        posterStageImages.forEach((image) => {
+            image.classList.toggle(
+                "is-active",
+                image.dataset.posterIndex === String(safeFrame)
+            );
+        });
+
+        activePosterIndex = safeFrame;
+    };
+
+    const updatePosterFromPointer = (clientX) => {
+        const rect = posterStage.getBoundingClientRect();
+        const clampedX = Math.min(Math.max(clientX - rect.left, 0), rect.width);
+        const progress = rect.width > 0 ? clampedX / rect.width : 0;
+        const frameIndex = Math.min(
+            posterCount,
+            Math.floor(progress * posterCount) + 1
+        );
+
+        setPosterFrame(frameIndex);
+    };
+
+    posterStage.addEventListener("mouseenter", (event) => {
+        updatePosterFromPointer(event.clientX);
+    });
+
+    posterStage.addEventListener("mousemove", (event) => {
+        updatePosterFromPointer(event.clientX);
+    });
+
+    posterStage.addEventListener("mouseleave", () => {
+        setPosterFrame(1);
+    });
+}
+
+if (document.body.classList.contains("main-page") && mainPagePanels.length > 0) {
+    let activePanelIndex = 0;
+    let isPanelScrollLocked = false;
+
+    const getClosestPanelIndex = () => {
+        const viewportCenter = window.scrollY + (window.innerHeight / 2);
+        let closestIndex = 0;
+        let closestDistance = Number.POSITIVE_INFINITY;
+
+        mainPagePanels.forEach((panel, index) => {
+            const panelCenter = panel.offsetTop + (panel.offsetHeight / 2);
+            const distance = Math.abs(panelCenter - viewportCenter);
+
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestIndex = index;
+            }
+        });
+
+        return closestIndex;
+    };
+
+    const scrollToPanel = (index) => {
+        const safeIndex = Math.min(Math.max(index, 0), mainPagePanels.length - 1);
+        const targetPanel = mainPagePanels[safeIndex];
+
+        activePanelIndex = safeIndex;
+        isPanelScrollLocked = true;
+
+        window.scrollTo({
+            top: targetPanel.offsetTop,
+            behavior: "smooth"
+        });
+
+        window.setTimeout(() => {
+            isPanelScrollLocked = false;
+        }, 700);
+    };
+
+    activePanelIndex = getClosestPanelIndex();
+
+    window.addEventListener("wheel", (event) => {
+        if (isPanelScrollLocked || Math.abs(event.deltaY) < 10) {
+            return;
+        }
+
+        event.preventDefault();
+        activePanelIndex = getClosestPanelIndex();
+
+        if (event.deltaY > 0) {
+            scrollToPanel(activePanelIndex + 1);
+            return;
+        }
+
+        scrollToPanel(activePanelIndex - 1);
+    }, { passive: false });
+
+    window.addEventListener("keydown", (event) => {
+        if (isPanelScrollLocked) {
+            return;
+        }
+
+        const moveForwardKeys = ["PageDown", "ArrowDown", " "];
+        const moveBackwardKeys = ["PageUp", "ArrowUp"];
+
+        if (!moveForwardKeys.includes(event.key) && !moveBackwardKeys.includes(event.key)) {
+            return;
+        }
+
+        event.preventDefault();
+        activePanelIndex = getClosestPanelIndex();
+
+        if (moveForwardKeys.includes(event.key)) {
+            scrollToPanel(activePanelIndex + 1);
+            return;
+        }
+
+        scrollToPanel(activePanelIndex - 1);
+    });
+
+    window.addEventListener("scroll", () => {
+        if (isPanelScrollLocked) {
+            return;
+        }
+
+        activePanelIndex = getClosestPanelIndex();
+    }, { passive: true });
 }
